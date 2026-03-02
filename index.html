@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our 3 Weeks Adventure 📖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Nunito:wght@400;600;700&family=Dancing+Script:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            perspective: 2000px;
+        }
+
+        .floating-hearts {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+            top: 0;
+            left: 0;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.7);
+            animation: float 8s ease-in infinite;
+            bottom: -100px;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0.5);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120vh) rotate(720deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            color: #764ba2;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .music-control:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+        }
+
+        .music-control.playing {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+            50% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+        }
+
+        /* CLOSED BOOK (COVER) STATE */
+        .book-closed {
+            width: 450px;
+            height: 650px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .book-closed:hover {
+            transform: translateY(-10px) rotateY(-5deg);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+        }
+
+        .book-closed.opening {
+            transform: rotateY(-180deg) scale(0.8);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .cover-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 50%, #c44569 100%);
+            border-radius: 5px 25px 25px 5px;
+            box-shadow: 
+                0 20px 50px rgba(0,0,0,0.3),
+                inset 0 0 50px rgba(0,0,0,0.2),
+                inset 2px 0 10px rgba(255,255,255,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 40px;
+            backface-visibility: hidden;
+            border-left: 8px solid rgba(0,0,0,0.2);
+        }
+
+        .cover-front::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 3px 20px 20px 3px;
+            pointer-events: none;
+        }
+
+        .cover-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #c44569 0%, #ee5a6f 50%, #ff6b6b 100%);
+            border-radius: 25px 5px 5px 25px;
+            transform: rotateY(180deg);
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 40px;
+            box-shadow: 
+                0 20px 50px rgba(0,0,0,0.3),
+                inset 0 0 50px rgba(0,0,0,0.2);
+            border-right: 8px solid rgba(0,0,0,0.2);
+        }
+
+        .cover-back::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 20px 3px 3px 20px;
+            pointer-events: none;
+        }
+
+        .book-spine-curved {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 40px;
+            background: linear-gradient(to right, 
+                rgba(0,0,0,0.3) 0%, 
+                rgba(0,0,0,0.1) 30%, 
+                rgba(255,255,255,0.1) 50%,
+                rgba(0,0,0,0.1) 70%,
+                rgba(0,0,0,0.3) 100%
+            );
+            border-radius: 5px 0 0 5px;
+            z-index: 10;
+        }
+
+        .cover-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { 
+                transform: scale(1);
+                text-shadow: 3px 3px 6px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.3);
+            }
+            50% { 
+                transform: scale(1.05);
+                text-shadow: 3px 3px 6px rgba(0,0,0,0.3), 0 0 40px rgba(255,255,255,0.6);
+            }
+        }
+
+        .cover-heart {
+            font-size: 6rem;
+            animation: heartbeat 1.5s ease-in-out infinite;
+            margin: 20px 0;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.15); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.08); }
+        }
+
+        .click-hint {
+            margin-top: 30px;
+            font-size: 1rem;
+            opacity: 0.8;
+            animation: bounce 2s infinite;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* OPEN BOOK STATE */
+        .book-open {
+            display: none;
+            width: 95%;
+            max-width: 1400px;
+            height: 90vh;
+            position: relative;
+            animation: bookOpen 1s ease-out;
+        }
+
+        @keyframes bookOpen {
+            from {
+                opacity: 0;
+                transform: scale(0.8) rotateY(-30deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotateY(0);
+            }
+        }
+
+        .spread {
+            width: 100%;
+            height: 100%;
+            display: none;
+            animation: spreadIn 0.6s ease-out;
+        }
+
+        @keyframes spreadIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .spread.active {
+            display: flex;
+        }
+
+        .spread-view {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            background: #fffef8;
+            border-radius: 10px 30px 30px 10px;
+            box-shadow: 
+                0 25px 80px rgba(0,0,0,0.4),
+                inset 0 0 60px rgba(0,0,0,0.05);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Rounded corners like real book */
+        .spread-view::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 60px;
+            background: linear-gradient(to right, 
+                rgba(0,0,0,0.15) 0%, 
+                rgba(0,0,0,0.05) 40%,
+                rgba(255,255,255,0.1) 50%,
+                rgba(0,0,0,0.05) 60%,
+                rgba(0,0,0,0.15) 100%
+            );
+            transform: translateX(-50%);
+            z-index: 100;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .left-page, .right-page {
+            width: 50%;
+            height: 100%;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .left-page {
+            border-right: 1px solid rgba(0,0,0,0.1);
+            background: linear-gradient(to right, #fffef8 98%, #f5f5f5 100%);
+            border-radius: 10px 0 0 30px;
+        }
+
+        .right-page {
+            background: linear-gradient(to left, #fffef8 98%, #f5f5f5 100%);
+            border-radius: 0 30px 30px 0;
+        }
+
+        /* Typography */
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            color: #2d3436;
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .page-subtitle {
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            color: #636e72;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .handwritten {
+            font-family: 'Caveat', cursive;
+            font-size: 1.6rem;
+            color: #2d3436;
+            line-height: 1.8;
+            text-align: center;
+        }
+
+        .elegant-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: #444;
+            line-height: 1.9;
+            text-align: justify;
+            text-align-last: center;
+        }
+
+        /* Polaroid */
+        .polaroid {
+            background: white;
+            padding: 20px 20px 50px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transform: rotate(-2deg);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: 15px;
+            max-width: 85%;
+            position: relative;
+        }
+
+        .polaroid:hover {
+            transform: rotate(0deg) scale(1.05) translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            z-index: 50;
+        }
+
+        .polaroid::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-3deg);
+            width: 100px;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .polaroid img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            display: block;
+            border: 1px solid #eee;
+        }
+
+        .polaroid-caption {
+            font-family: 'Caveat', cursive;
+            font-size: 1.6rem;
+            text-align: center;
+            margin-top: 15px;
+            color: #555;
+            font-weight: 700;
+        }
+
+        .note-box {
+            background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+            padding: 25px;
+            border-radius: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #ffd93d;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            position: relative;
+            transform: rotate(-1deg);
+            max-width: 90%;
+        }
+
+        .note-box::before {
+            content: '📝';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            font-size: 2rem;
+            background: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Dream Cards with Hover Zoom */
+        .dream-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            width: 100%;
+            max-width: 500px;
+            margin-top: 20px;
+        }
+
+        .dream-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            transform: rotate(var(--rotation, 0deg));
+        }
+
+        .dream-card:nth-child(1) { --rotation: -3deg; }
+        .dream-card:nth-child(2) { --rotation: 2deg; }
+        .dream-card:nth-child(3) { --rotation: 2deg; }
+        .dream-card:nth-child(4) { --rotation: -2deg; }
+
+        .dream-card:hover {
+            transform: scale(1.15) rotate(0deg);
+            z-index: 100;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .dream-icon {
+            font-size: 3.5rem;
+            padding: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .dream-label {
+            font-family: 'Caveat', cursive;
+            font-size: 1.4rem;
+            text-align: center;
+            padding: 15px;
+            color: #555;
+            font-weight: 700;
+            background: white;
+        }
+
+        /* Expanded Dream View */
+        .dream-expand {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .dream-expand.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .dream-expand-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        .dream-expand.active .dream-expand-content {
+            transform: scale(1);
+        }
+
+        .dream-expand-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .dream-expand-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+
+        .dream-expand-desc {
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            color: #666;
+        }
+
+        .close-expand {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            font-size: 3rem;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .close-expand:hover {
+            transform: scale(1.2) rotate(90deg);
+        }
+
+        /* Decorative Elements */
+        .sticker {
+            position: absolute;
+            font-size: 3rem;
+            animation: stickerWiggle 3s ease-in-out infinite;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .sticker:hover {
+            transform: scale(1.3) !important;
+        }
+
+        @keyframes stickerWiggle {
+            0%, 100% { transform: rotate(-15deg); }
+            50% { transform: rotate(15deg); }
+        }
+
+        .tape {
+            position: absolute;
+            width: 120px;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.6);
+            transform: rotate(-35deg);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            backdrop-filter: blur(2px);
+        }
+
+        .page-number {
+            position: absolute;
+            bottom: 30px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: #b2bec3;
+            font-style: italic;
+        }
+
+        .page-number.left { left: 40px; }
+        .page-number.right { right: 40px; }
+
+        .date-badge {
+            background: linear-gradient(135deg, #ffd93d 0%, #ffb800 100%);
+            color: #2d3436;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 15px;
+            box-shadow: 0 6px 0 #d4a000, 0 10px 25px rgba(0,0,0,0.2);
+            transform: rotate(-2deg);
+            font-size: 1.2rem;
+            font-family: 'Caveat', cursive;
+            font-size: 1.5rem;
+        }
+
+        /* Navigation */
+        .nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            width: 70px;
+            height: 140px;
+            border-radius: 0 20px 20px 0;
+            font-size: 2.5rem;
+            cursor: pointer;
+            box-shadow: 5px 0 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #764ba2;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            width: 90px;
+            background: white;
+            box-shadow: 8px 0 40px rgba(0,0,0,0.3);
+        }
+
+        .nav-btn.prev {
+            left: 0;
+            border-radius: 0 20px 20px 0;
+        }
+
+        .nav-btn.next {
+            right: 0;
+            border-radius: 20px 0 0 20px;
+            box-shadow: -5px 0 30px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn.next:hover {
+            width: 90px;
+            box-shadow: -8px 0 40px rgba(0,0,0,0.3);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            width: 70px;
+        }
+
+        .page-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 40px;
+            border-radius: 30px;
+            font-weight: bold;
+            color: #764ba2;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            animation: confetti-fall 4s linear forwards;
+            z-index: 999;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Letter styling */
+        .love-letter {
+            background: linear-gradient(to bottom, #fff5f5 0%, white 100%);
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border: 2px solid #ffe0e0;
+            max-width: 95%;
+            position: relative;
+            transform: rotate(-0.5deg);
+        }
+
+        .love-letter::before {
+            content: '💌';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            background: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .photo-collage {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .mini-polaroid {
+            background: white;
+            padding: 10px 10px 30px 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .mini-polaroid:hover {
+            transform: scale(1.1) rotate(0deg);
+            z-index: 10;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .mini-polaroid img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .book-closed {
+                width: 350px;
+                height: 500px;
+            }
+            
+            .cover-title {
+                font-size: 3rem;
+            }
+            
+            .page-title {
+                font-size: 2.2rem;
+            }
+            
+            .polaroid img {
+                height: 200px;
+            }
+            
+            .dream-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .book-closed {
+                width: 280px;
+                height: 400px;
+            }
+            
+            .cover-title {
+                font-size: 2.2rem;
+            }
+            
+            .left-page, .right-page {
+                padding: 25px;
+            }
+            
+            .nav-btn {
+                width: 50px;
+                height: 100px;
+                font-size: 1.8rem;
+            }
+        }
+
+        .promise-box {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            border: 3px solid #ff6b6b;
+            position: relative;
+            max-width: 90%;
+        }
+
+        .promise-box::before {
+            content: '🔐';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.5rem;
+            background: white;
+            padding: 0 15px;
+        }
+
+        .promise-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .promise-list li {
+            font-family: 'Caveat', cursive;
+            font-size: 1.6rem;
+            color: #555;
+            margin: 15px 0;
+            padding-left: 35px;
+            position: relative;
+        }
+
+        .promise-list li::before {
+            content: '✨';
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Music Control -->
+    <div class="music-control" id="musicBtn" onclick="toggleMusic()">
+        <span id="musicIcon">🎵</span>
+        <span id="musicText">Putar Musik</span>
+    </div>
+
+    <!-- Audio -->
+    <audio id="bgMusic" loop>
+        <source src="Beegees_-_How_deep_is_your_love_(mp3.pm).mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Floating Hearts -->
+    <div class="floating-hearts" id="heartsContainer"></div>
+
+    <!-- Dream Expand Modal -->
+    <div class="dream-expand" id="dreamExpand" onclick="closeDreamExpand()">
+        <div class="close-expand">✕</div>
+        <div class="dream-expand-content" onclick="event.stopPropagation()">
+            <img src="" alt="" class="dream-expand-img" id="expandImg">
+            <div class="dream-expand-title" id="expandTitle"></div>
+            <div class="dream-expand-desc" id="expandDesc"></div>
+        </div>
+    </div>
+
+    <!-- CLOSED BOOK (COVER) -->
+    <div class="book-closed" id="bookClosed" onclick="openBook()">
+        <div class="book-spine-curved"></div>
+        <div class="cover-front">
+            <div class="cover-heart">📖</div>
+            <div class="cover-title">Our Love Story</div>
+            <div style="font-size: 1.3rem; opacity: 0.95; margin-top: 10px;">
+                3 Weeks Anniversary<br>
+                Aldrich Dengan Belinda
+            </div>
+            <div style="font-size: 4rem; margin: 20px 0; letter-spacing: 10px;">
+                💕 🌟 💕
+            </div>
+            <div class="click-hint">
+                Klik untuk membuka buku ✨
+            </div>
+        </div>
+        <div class="cover-back">
+            <div style="font-size: 3rem; margin-bottom: 20px;">🔒</div>
+            <div style="font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 15px;">
+                Sampai Jumpa Belinda... 💖
+            </div>
+            <div style="font-size: 1.2rem; line-height: 1.8; opacity: 0.95;">
+                Di website selanjutnya...<br>
+                Anniversary 1 Bulan! 🎉<br><br>
+                <span style="font-size: 3rem;">💕</span>
+            </div>
+            <div style="margin-top: 30px; font-size: 1rem; opacity: 0.8;">
+                (Klik untuk kembali ke sampul)
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation (hidden initially) -->
+    <button class="nav-btn prev" id="prevBtn" onclick="prevSpread()" style="display: none;" disabled>
+        ⬅️
+    </button>
+    <button class="nav-btn next" id="nextBtn" onclick="nextSpread()" style="display: none;">
+        ➡️
+    </button>
+    <div class="page-indicator" id="pageIndicator" style="display: none;">
+        Spread <span id="currentSpread">1</span> / <span id="totalSpreads">5</span>
+    </div>
+
+    <!-- OPEN BOOK -->
+    <div class="book-open" id="bookOpen">
+        
+        <!-- SPREAD 1: Chapter 1 & First Date -->
+        <div class="spread active" id="spread-0">
+            <div class="spread-view">
+                <!-- Left: Chapter 1 -->
+                <div class="left-page">
+                    <div class="tape" style="top: 40px; right: 30px;"></div>
+                    <div class="sticker" style="top: 30px; left: 30px;">🌹</div>
+                    
+                    <div class="page-title">Chapter One</div>
+                    <div class="page-subtitle">The Beginning of Us</div>
+                    
+                    <div class="polaroid">
+                        <img src="c3df061c-2108-4409-93ea-5d91601572fd.jpg" alt="Foto 1" id="photo1">
+                        <div class="polaroid-caption">Momen pertama kita bertemu ✨ <br>
+                        Ketika Natal 16-12-2025</div>
+                    </div>
+                    
+                    <p class="handwritten" style="margin-top: 20px; font-size: 1.7rem;">
+                        "Awal dari kisah kita dimulai dari sini,<br>
+                        Disini lah aku mulai memberainkan diri ngechat kamu bubb"<br>
+                    </p>
+                    
+                    <span class="page-number left">1</span>
+                </div>
+                
+                <!-- Right: First Date -->
+                <div class="right-page">
+                    <div class="sticker" style="top: 30px; right: 30px; animation-delay: 0.5s;">💑</div>
+                    
+                    <div class="page-title">First Date</div>
+                    <div class="page-subtitle">Awal yang manis</div>
+                    
+                    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                        <div class="polaroid" style="transform: rotate(3deg); max-width: 45%;">
+                            <img src="0494e26f-2508-4356-844f-61b7a2dfff60.jpg" alt="Foto 2" id="photo2">
+                            <div class="polaroid-caption">Makan Bareng 🍽️</div>
+                        </div>
+                        <div class="polaroid" style="transform: rotate(-3deg); max-width: 45%;">
+                            <img src="83e13893-6013-484f-9323-d6efccbc8eda.jpg" alt="Foto 3" id="photo3">
+                            <div class="polaroid-caption">Selfie bareng 🤳</div>
+                        </div>
+                    </div>
+                    
+                    <div class="note-box">
+                        <p class="handwritten" style="margin: 0; font-size: 1.5rem; color: #5d4e37;">
+                            First date kita itu... awkward tapi sweet banget! 
+                            Aku deg-degan banget waktu itu kakk, 
+                            Ga nyangka kakak mau diajak jalan ke rcw. 
+                            Moment yang akan selalu kusimpan dalam hati 💝<br> LOVE YOU SAYANG
+                        </p>
+                    </div>
+                    
+                    <span class="page-number right">2</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SPREAD 2: 3 Weeks & Things I Love -->
+        <div class="spread" id="spread-1">
+            <div class="spread-view">
+                <!-- Left: 3 Weeks -->
+                <div class="left-page">
+                    <div class="sticker" style="top: 30px; left: 30px;">🎊</div>
+                    
+                    <div class="date-badge">🌟 3 Minggu Bersama 🌟</div>
+                    
+                    <div class="polaroid" style="transform: rotate(-2deg); margin-top: 30px;">
+                        <img src="53df691a-ae66-4fe9-be86-e50d554384d8.jpg" alt="Foto 4" id="photo4">
+                        <div class="polaroid-caption">3 weeks and counting! 💪</div>
+                    </div>
+                    
+                    <div style="margin-top: 30px; width: 90%;">
+                        <div style="background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); margin: 15px 0; border-left: 4px solid #ff6b6b; transform: rotate(-1deg);">
+                            <div style="font-family: 'Dancing Script', cursive; font-size: 1.5rem; color: #ff6b6b;">Minggu Pertama</div>
+                            <div style="font-family: 'Caveat', cursive; font-size: 1.3rem; color: #777;">Masih malu malu, banyak tanya "ini beneran gak sih kalau ini udh pacaran?" 😳</div>
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); margin: 15px 0; border-left: 4px solid #764ba2; transform: rotate(1deg);">
+                            <div style="font-family: 'Dancing Script', cursive; font-size: 1.5rem; color: #764ba2;">Minggu Kedua</div>
+                            <div style="font-family: 'Caveat', cursive; font-size: 1.3rem; color: #777;">Udah mulai nyambung, udh mulai manggil sayang-sayangan 💝</div>
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); margin: 15px 0; border-left: 4px solid #00b894; transform: rotate(-1deg);">
+                            <div style="font-family: 'Dancing Script', cursive; font-size: 1.5rem; color: #00b894;">Minggu Ketiga</div>
+                            <div style="font-family: 'Caveat', cursive; font-size: 1.3rem; color: #777;">Keterusan sampe sekarang, Makin sayang deh sama kamu 💕</div>
+                        </div>
+                    </div>
+                    
+                    <span class="page-number left">3</span>
+                </div>
+                
+                <!-- Right: Things I Love -->
+                <div class="right-page">
+                    <div class="tape" style="top: 40px; left: 40%; transform: rotate(30deg);"></div>
+                    <div class="sticker" style="top: 30px; right: 30px;">💖</div>
+                    
+                    <div class="page-title">Things I Love</div>
+                    <div class="page-subtitle">Tentang Dirimu Belinda</div>
+                    
+                    <div style="width: 90%; margin-top: 20px;">
+                        <div style="background: linear-gradient(135deg, #fff5f5 0%, white 100%); padding: 25px; border-radius: 20px; margin: 20px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.1); position: relative; transform: rotate(-2deg);">
+                            <div style="font-size: 2rem; position: absolute; top: -15px; left: 20px;">😄</div>
+                            <div style="font-family: 'Dancing Script', cursive; font-size: 1.6rem; color: #ff6b6b; margin-bottom: 8px;">Kamu tuh baik banget</div>
+                            <div style="font-family: 'Caveat', cursive; font-size: 1.3rem; color: #666;">Dari pertama kali kita kenal aku tau sih kamu emang baik orangnya, makanya aku suka kamu 😍</div>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #f3f0ff 0%, white 100%); padding: 25px; border-radius: 20px; margin: 20px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.1); position: relative; transform: rotate(2deg);">
+                            <div style="font-size: 2rem; position: absolute; top: -15px; left: 20px;">😆</div>
+                            <div style="font-family: 'Dancing Script', cursive; font-size: 1.6rem; color: #764ba2; margin-bottom: 8px;">Kamu tuh lucu banget</div>
+                            <div style="font-family: 'Caveat', cursive; font-size: 1.3rem; color: #666;">Gemesin banget! Pengen cubit pipi kamu bub 🤭</div>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #f0fff4 0%, white 100%); padding: 25px; border-radius: 20px; margin: 20px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.1); position: relative; transform: rotate(-1deg);">
+                            <div style="font-size: 2rem; position: absolute; top: -15px; left: 20px;">💝</div>
+                            <div style="font-family: 'Dancing Script', cursive; font-size: 1.6rem; color: #00b894; margin-bottom: 8px;">Kamu tuh cantik banget melebihi blekping</div>
+                            <div style="font-family: 'Caveat', cursive; font-size: 1.3rem; color: #666;">The best! Ga ada lawan cantiknya ✨</div>
+                        </div>
+                    </div>
+                    
+                    <span class="page-number right">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SPREAD 3: Beautiful in White & Future Dreams -->
+        <div class="spread" id="spread-2">
+            <div class="spread-view">
+                <!-- Left: The Song -->
+                <div class="left-page">
+                    <div class="sticker" style="top: 30px; left: 30px;">🎵</div>
+                    
+                    <div class="page-title" style="font-size: 2.3rem;">How deep is your love</div>
+                    <div class="page-subtitle">Ich Liebe Dich Belinda</div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(118,75,162,0.1) 0%, rgba(255,255,255,0.9) 100%); padding: 35px; border-radius: 25px; text-align: center; margin-top: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 2px solid rgba(118,75,162,0.2);">
+                        <div style="font-size: 4rem; margin-bottom: 20px;">🎼</div>
+                        <p class="elegant-text" style="font-style: italic; font-size: 1.2rem; line-height: 2.2;">
+                            And you come to me on a summer breeze<br>
+                            Keep me warm in your love, then you softly leave<br>
+                            And it's me you need to show<br><br>    
+                            <span style="color: #764ba2; font-weight: bold;">How Deep Is Your Love?</span><br>
+                            How deep is your love?<br>
+                            How deep is your love?<br>
+                            I really mean to learn<br>
+                            'Cause we're living in a world of fools<br>
+                            Breaking us down when they all should let us be<br>
+                            We belong to you and me (na-na-na-na-na)
+
+                        </p>
+                        <div style="margin-top: 20px; font-family: 'Dancing Script', cursive; font-size: 1.5rem; color: #999;">— Bee Gees</div>
+                    </div>
+                    
+                    <p class="handwritten" style="margin-top: 25px; font-size: 1.5rem; color: #764ba2;">
+                        Tombolnya 🎵 ada dipojok atas yakk!(harusnya sih udh tau)
+                    </p>
+                    
+                    <span class="page-number left">5</span>
+                </div>
+                
+                <!-- Right: Future Dreams with Hover -->
+                <div class="right-page">
+                    <div class="sticker" style="top: 30px; right: 30px;">🌈</div>
+                    
+                    <div class="page-title">Future Dreams</div>
+                    <div class="page-subtitle">Mimpi kita bersama</div>
+                    
+                    <div class="dream-container">
+                        <div class="dream-card" onclick="expandDream('traveling')">
+                            <div class="dream-icon">✈️</div>
+                            <div class="dream-label">Traveling</div>
+                        </div>
+                        <div class="dream-card" onclick="expandDream('home')">
+                            <div class="dream-icon">👫</div>
+                            <div class="dream-label">Married</div>
+                        </div>
+                        <div class="dream-card" onclick="expandDream('cooking')">
+                            <div class="dream-icon">👨‍👩‍👧‍👦</div>
+                            <div class="dream-label">Simple family</div>
+                        </div>
+                        <div class="dream-card" onclick="expandDream('old')">
+                            <div class="dream-icon">👴👵</div>
+                            <div class="dream-label">Grow Old</div>
+                        </div>
+                    </div>
+                    
+                    <p class="handwritten" style="margin-top: 30px; font-size: 1.5rem; color: #00b894;">
+                        Klik salah satu mimpi di atas! ✨
+                    </p>
+                    
+                    <span class="page-number right">6</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SPREAD 4: Photo Dump (NEW!) -->
+        <div class="spread" id="spread-3">
+            <div class="spread-view">
+                <!-- Left: Photo Collage -->
+                <div class="left-page">
+                    <div class="tape" style="top: 30px; right: 30px; transform: rotate(-30deg);"></div>
+                    <div class="sticker" style="top: 20px; left: 20px;">📸</div>
+                    
+                    <div class="page-title">Our Moments</div>
+                    <div class="page-subtitle">Kenangan indah kita</div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 400px; margin-top: 20px;">
+                        <div class="polaroid" style="transform: rotate(-5deg); margin: 0;">
+                            <img src="9a6669af-2e9b-48ef-a36f-a1532a06902d.jpg" alt="Dump 1" id="dump1" style="height: 140px;">
+                            <div class="polaroid-caption" style="font-size: 1.1rem;">Random moment 😆</div>
+                        </div>
+                        <div class="polaroid" style="transform: rotate(4deg); margin: 0;">
+                            <img src="8be178ad-0f04-4907-8de2-4e6e4df97ec6.jpg" alt="Dump 2" id="dump2" style="height: 140px;">
+                            <div class="polaroid-caption" style="font-size: 1.1rem;">Sweet smile 💕</div>
+                        </div>
+                        <div class="polaroid" style="transform: rotate(3deg); margin: 0;">
+                            <img src="8be178ad-0f04-4907-8de2-4e6e4df97ec6.jpg" alt="Dump 3" id="dump3" style="height: 140px;">
+                            <div class="polaroid-caption" style="font-size: 1.1rem;">Jalan-jalan 🚶</div>
+                        </div>
+                        <div class="polaroid" style="transform: rotate(-4deg); margin: 0;">
+                            <img src="6a380b3b-8134-4f4a-b9b3-740bc9f0de18.jpg" alt="Dump 4" id="dump4" style="height: 140px;">
+                            <div class="polaroid-caption" style="font-size: 1.1rem;">Makan bareng 🍜</div>
+                        </div>
+                    </div>
+                    
+                    <p class="handwritten" style="margin-top: 25px; font-size: 1.4rem;">
+                        "Setiap foto punya cerita lucu<br>
+                        Setiap momen punya kenangan manis<br>
+                        Semoga kita bisa terus nambahin foto-foto ini bubb"<br>
+                    </p>
+                    
+                    <span class="page-number left">7</span>
+                </div>
+                
+                <!-- Right: More Photos & Caption -->
+                <div class="right-page">
+                    <div class="sticker" style="top: 20px; right: 20px;">💝</div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 400px; margin-top: 10px;">
+                        <div class="polaroid" style="transform: rotate(5deg); margin: 0;">
+                            <img src="bcbaaf91-0b19-4155-948e-2e9cc9e34f81.jpg" alt="Dump 5" id="dump5" style="height: 140px;">
+                            <div class="polaroid-caption" style="font-size: 1.1rem;">Selfie time 🤳</div>
+                        </div>
+                        <div class="polaroid" style="transform: rotate(-3deg); margin: 0;">
+                            <img src="cdd23958-36ce-463f-85d6-90c066efb612.jpg" alt="Dump 6" id="dump6" style="height: 140px;">
+                            <div class="polaroid-caption" style="font-size: 1.1rem;">Lucu banget 🤭</div>
+                        </div>
+                        <div class="polaroid" style="transform: rotate(-2deg); margin: 0;">
+                            <img src="91078d07-8c81-4150-b556-48ad44123626.jpg" alt="Dump 7" id="dump7" style="height: 140px;">
+                            <div class="polaroid-caption" style="font-size: 1.1rem;">Moment lucu 😂</div>
+                        </div>
+                        <div class="polaroid" style="transform: rotate(4deg); margin: 0;">
+                            <img src="067fd512-53c4-4cdf-b234-4964b0d20150.jpg" alt="Dump 8" id="dump8" style="height: 140px;">
+                            <div class="polaroid-caption" style="font-size: 1.1rem;">Favorite! 💖 Cantik banget bjirr</div>
+                        </div>
+                    </div>
+                    
+                    <div class="note-box" style="margin-top: 25px;">
+                        <p class="handwritten" style="margin: 0; font-size: 1.4rem; color: #5d4e37;">
+                            Foto-foto ini adalah bukti bahwa kita udah lewatin banyak momen bareng(belum banyak kali sih). Dari yang awkward sampe yang sweet banget! Oiyaa kamu cantik banget difoto itu sayang 🥰
+                        </p>
+                    </div>
+                    
+                    <span class="page-number right">8</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SPREAD 5: Love Letter & Promise -->
+        <div class="spread" id="spread-4">
+            <div class="spread-view">
+                <!-- Left: Love Letter -->
+                <div class="left-page">
+                    <div class="tape" style="top: 50px; right: 30px; transform: rotate(45deg);"></div>
+                    
+                    <div class="love-letter">
+                        <div style="font-family: 'Dancing Script', cursive; font-size: 2.2rem; color: #e17055; margin-bottom: 20px; text-align: center;">
+                            Untuk Kamu, Belinda sayangku
+                        </div>
+                        
+                        <p class="elegant-text" style="font-size: 1.15rem; line-height: 2; text-align: left;">
+                            Belindaku,<br><br>
+                            
+                            Tiga minggu mungkin terasa singkat bagi banyak orang. 
+                            Tapi bagiku, ini adalah tiga minggu penuh warna yang 
+                            mengubah cara pandangku tentang cinta.(pretttt)<br><br>
+                            
+                            Sori kalau aku mungkin membosankan dimata kamu bubb,
+                            Tapi lu lucu banget bjirr, asik lagi orangnyaa<br><br>
+                            
+                            Terima kasih sudah mau bersama Belinda sayang, sudah mau 
+                            melihat kebaikanku di balik kekuranganku.(Pretttt)<br><br>
+                            
+                            Semoga kamu ga bosen sama Aldrich yang gajelas ini,
+                            semoga kamu selalu mencintai Aldrich
+                            Semoga hubungan kita ini ga cuman 3 minggu tetapi selamanya<br><br>
+                            
+                            Love You Belindaaa mai bubub,<br>
+                            <span style="font-family: 'Dancing Script', cursive; font-size: 1.8rem; color: #ff6b6b;">❤️ Aldrich</span>
+                        </p>
+                    </div>
+                    
+                    <span class="page-number left">9</span>
+                </div>
+                
+                <!-- Right: Promise (Back Cover inside) -->
+                <div class="right-page" style="background: linear-gradient(to left, #fff5f5 98%, #ffe0e0 100%);">
+                    <div class="sticker" style="top: 30px; right: 30px;">🔐</div>
+                    
+                    <div class="promise-box">
+                        <div style="font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: #ff6b6b; margin-bottom: 20px; text-align: center;">
+                            Mai Janji Pada bubub
+                        </div>
+                        
+                        <ul class="promise-list">
+                            <li>Selalu ada, dalam suka maupun duka🥵</li>
+                            <li>Membuatmu tertawa setiap hari🥵</li>
+                            <li>Selalu mengirim reels instagram🥵</li>
+                            <li>Selalu ngechat kamu hehehe🥵</li>
+                            <li>Terus berusaha menjadi yang terbaik🥵</li>
+                            <li>Tidak pernah bosan mencintaimu setiap hari🥵</li>
+                        </ul>
+                        
+                        <div style="text-align: center; margin-top: 25px; padding-top: 20px; border-top: 2px dashed #ff6b6b;">
+                            <p class="handwritten" style="font-size: 1.6rem; color: #764ba2; margin: 0;">
+                                "Bukan janji manis,<br>
+                                tapi komitmen seumur hidup Aldrich Bezierrrrr🥵🥵🥵🥵 " 💕
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
+                        <div style="font-family: 'Dancing Script', cursive; font-size: 1.8rem; color: #c44569;">
+                            To be continued...
+                        </div>
+                        <div style="font-family: 'Caveat', cursive; font-size: 1.3rem; color: #999; margin-top: 10px;">
+                            Sampai jumpa di chapter selanjutnya!
+                        </div>
+                    </div>
+                    
+                    <span class="page-number right">~</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentSpread = 0;
+        const totalSpreads = 5;  // UPDATE JADI 5
+        let isMusicPlaying = false;
+        let isBookOpen = false;
+        const music = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+
+        // Dream data
+        const dreamData = {
+            traveling: {
+                img: 'https://images.unsplash.com/photo-1568430462989-44163eb1752f?w=600',
+                title: 'Melihat Paus Bareng-Bareng 🐋',
+                desc: 'Bayangin kita liat paus di tengah laut, berdiri di atas kapal kecil, angin sepoi-sepoi, dan kamu yang excited banget sambil teriak'
+            },
+            home: {
+                img: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWFycmllZHxlbnwwfHwwfHx8MA%3D%3D',
+                title: 'Nikahhh 💍',
+                desc: 'Aminin aja deh duluu'
+            },
+            cooking: {
+                img: 'https://images.unsplash.com/photo-1581579186913-45ac3e6efe93?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzR8fGZhbWlseXxlbnwwfHwwfHx8MA%3D%3D',
+                title: 'punya keluarga cemara 🌲',
+                desc: 'Punya anak yang baik, lucu dan sehat sekeluarga tanpa kekurangan satu pun'
+            },
+            old: {
+                img: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=600',
+                title: 'Tua Bersama 👴👵',
+                desc: 'Anjayyyy geloooo masih kecil udh mikir beginii'
+            }
+        };
+
+        // Floating hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = ['💕', '💖', '💗', '💓', '💝', '💘', '💞'][Math.floor(Math.random() * 7)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (Math.random() * 4 + 6) + 's';
+            heart.style.opacity = Math.random() * 0.5 + 0.3;
+            heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+            document.getElementById('heartsContainer').appendChild(heart);
+            setTimeout(() => heart.remove(), 10000);
+        }
+        setInterval(createHeart, 400);
+
+        // Open book
+        function openBook() {
+            document.getElementById('bookClosed').classList.add('opening');
+            setTimeout(() => {
+                document.getElementById('bookClosed').style.display = 'none';
+                document.getElementById('bookOpen').style.display = 'block';
+                document.getElementById('prevBtn').style.display = 'flex';
+                document.getElementById('nextBtn').style.display = 'flex';
+                document.getElementById('pageIndicator').style.display = 'block';
+                isBookOpen = true;
+                createConfetti();
+            }, 800);
+        }
+
+        // Music
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                music.pause();
+                musicBtn.classList.remove('playing');
+                document.getElementById('musicIcon').textContent = '🎵';
+                document.getElementById('musicText').textContent = 'Putar Musik';
+            } else {
+                music.play().catch(e => alert('Klik lagi untuk play! 🎵'));
+                musicBtn.classList.add('playing');
+                document.getElementById('musicIcon').textContent = '🎶';
+                document.getElementById('musicText').textContent = 'Musik Nyala';
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+        // Navigation
+        function updateIndicator() {
+            document.getElementById('currentSpread').textContent = currentSpread + 1;
+            document.getElementById('prevBtn').disabled = currentSpread === 0;
+            document.getElementById('nextBtn').disabled = currentSpread === totalSpreads - 1;
+        }
+
+        function nextSpread() {
+            if (currentSpread < totalSpreads - 1) {
+                document.getElementById(`spread-${currentSpread}`).classList.remove('active');
+                currentSpread++;
+                document.getElementById(`spread-${currentSpread}`).classList.add('active');
+                updateIndicator();
+                createConfetti();
+            }
+        }
+
+        function prevSpread() {
+            if (currentSpread > 0) {
+                document.getElementById(`spread-${currentSpread}`).classList.remove('active');
+                currentSpread--;
+                document.getElementById(`spread-${currentSpread}`).classList.add('active');
+                updateIndicator();
+            }
+        }
+
+        // Dream expand
+        function expandDream(type) {
+            const data = dreamData[type];
+            document.getElementById('expandImg').src = data.img;
+            document.getElementById('expandTitle').textContent = data.title;
+            document.getElementById('expandDesc').textContent = data.desc;
+            document.getElementById('dreamExpand').classList.add('active');
+        }
+
+        function closeDreamExpand() {
+            document.getElementById('dreamExpand').classList.remove('active');
+        }
+
+        // Confetti
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#ffd93d', '#6bcf7f', '#4d96ff', '#c44569', '#f8b500', '#00d2d3'];
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.width = (Math.random() * 12 + 8) + 'px';
+                    confetti.style.height = (Math.random() * 12 + 8) + 'px';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 40);
+            }
+        }
+
+        // Keyboard
+        document.addEventListener('keydown', (e) => {
+            if (!isBookOpen) {
+                if (e.key === 'Enter' || e.key === ' ') openBook();
+                return;
+            }
+            if (e.key === 'ArrowRight') nextSpread();
+            if (e.key === 'ArrowLeft') prevSpread();
+            if (e.key === 'Escape') closeDreamExpand();
+            if (e.key === 'm' || e.key === 'M') toggleMusic();
+        });
+
+        // Touch swipe
+        let touchStartX = 0;
+        document.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
+        document.addEventListener('touchend', e => {
+            const diff = e.changedTouches[0].screenX - touchStartX;
+            if (Math.abs(diff) > 50) {
+                if (diff < 0) nextSpread();
+                else prevSpread();
+            }
+        });
+
+        console.log('%c 📖 BUKU CINTA DIGITAL SIAP!', 'font-size: 20px; font-weight: bold; color: #ff6b6b;');
+        console.log('%c Total 5 spread dengan Photo Dump baru! 📸', 'font-size: 14px;');
+    </script>
+
+</body>
+</html>
